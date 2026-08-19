@@ -1,2 +1,0 @@
-# jrfhunters
-ai chatbot
