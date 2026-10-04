@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JRF Hunters | UGC NET Paper 1 Mega Quiz: ICT & Communication</title>
+    <style>
+        :root {
+            --primary-color: #003366;
+            --secondary-color: #ff9900;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            width: 100%;
+            max-width: 750px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        h1 { color: var(--primary-color); margin-bottom: 5px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
+        input[type="text"] {
+            width: 80%; padding: 10px; margin: 15px 0; border: 1px solid #ccc;
+            border-radius: 5px; font-size: 16px;
+        }
+        button {
+            background-color: var(--primary-color); color: white; border: none;
+            padding: 12px 25px; font-size: 16px; border-radius: 5px;
+            cursor: pointer; transition: 0.3s; margin: 5px; font-weight: bold;
+        }
+        button:hover { background-color: #002244; }
+        .secondary-btn { background-color: var(--secondary-color); color: #000; }
+        .secondary-btn:hover { background-color: #e68a00; }
+        .danger-btn { background-color: #dc3545; color: white; }
+        .danger-btn:hover { background-color: #c82333; }
+        .hidden { display: none; }
+        
+        /* Dashboard Styles */
+        .dashboard-table { width: 100%; border-collapse: collapse; margin-top: 20px; margin-bottom: 20px; }
+        .dashboard-table th, .dashboard-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .dashboard-table th { background-color: var(--primary-color); color: white; }
+        .dashboard-table tr:nth-child(even) { background-color: #f2f2f2; }
+        .empty-dash { color: #666; font-style: italic; margin: 20px 0; background: #eee; padding: 15px; border-radius: 5px;}
+        .local-warning { font-size: 12px; color: #888; margin-top: 10px; font-style: italic; }
+
+        /* Quiz Styles */
+        .question-text { font-size: 18px; font-weight: bold; margin-bottom: 20px; text-align: left; }
+        .passage-text { font-size: 14px; background: #e9ecef; padding: 10px; text-align: left; margin-bottom: 15px; border-radius: 5px; border-left: 4px solid var(--primary-color); }
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { background-color: #f9f9f9; color: #333; border: 1px solid #ddd; text-align: left; padding: 12px; font-weight: normal; }
+        .option-btn:hover { background-color: #e9ecef; }
+        .option-btn.selected { background-color: var(--secondary-color); color: white; border-color: var(--secondary-color); }
+        .nav-buttons { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Analysis Screen Styles */
+        #analysis-container { text-align: left; max-height: 60vh; overflow-y: auto; padding-right: 10px; }
+        .analysis-card { background: #fdfdfd; border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 15px; }
+        .analysis-q-title { font-weight: bold; margin-bottom: 10px; }
+        .analysis-response { margin: 5px 0; font-size: 14px; }
+        .analysis-rationale { background: #eef5fa; padding: 10px; border-left: 3px solid var(--primary-color); font-size: 14px; margin-top: 10px; }
+        .text-green { color: var(--correct-color); font-weight: bold; }
+        .text-red { color: var(--wrong-color); font-weight: bold; }
+        .text-gray { color: #6c757d; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <!-- Dashboard Screen -->
+    <div class="container" id="dashboard-screen">
+        <h1>JRF Hunters Dashboard</h1>
+        <div class="subtitle">UGC NET Paper 1 Mega Assessment: ICT & Communication</div>
+        
+        <button class="secondary-btn" onclick="showEnrollScreen()" style="font-size: 18px; padding: 15px 30px;">Start New Assessment</button>
+        
+        <h3 style="margin-top: 30px; text-align: left; color: var(--primary-color);">Candidate Leaderboard & History</h3>
+        <p style="text-align: left; font-size: 14px; color: #555;">All test submissions and candidate names are saved securely on this device's browser.</p>
+        
+        <div id="dashboard-content">
+            <!-- Table injected by JS -->
+        </div>
+        
+        <div style="margin-top: 30px; font-size: 14px; color: #666; text-align: center;">
+            Join our community on Telegram: <strong>t.me/jrfhunters</strong><br>
+            Subscribe on YouTube: <strong>@AMITMEHRADU</strong>
+        </div>
+    </div>
+
+    <!-- Enrollment Screen -->
+    <div class="container hidden" id="enroll-screen">
+        <h1>JRF Hunters</h1>
+        <div class="subtitle">Candidate Registration</div>
+        <p>Enter your name to begin the 50-question assessment. You can submit early at any point. Your marks will be recorded in the dashboard.</p>
+        <input type="text" id="student-name" placeholder="Enter your full name" required>
+        <br>
+        <button onclick="startQuiz()">Begin Assessment</button>
+        <button class="secondary-btn" onclick="initDashboard()" style="margin-top:10px;">Back to Dashboard</button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="container hidden" id="quiz-screen">
+        <h1>JRF Hunters</h1>
+        <div class="subtitle" id="question-tracker">Question 1 of 50</div>
+        <div id="passage-container" class="passage-text hidden"></div>
+        <div class="question-text" id="question-text">Question goes here</div>
+        <div class="options-container" id="options-container"></div>
+        <div class="nav-buttons">
+            <button onclick="confirmSubmit()" class="danger-btn" id="submit-btn" title="Click to submit test early">Submit Early</button>
+            <button onclick="nextQuestion()" id="next-btn">Next Question</button>
+        </div>
+    </div>
+
+    <!-- Result Screen -->
+    <div class="container hidden" id="result-screen">
+        <h1>Assessment Submitted</h1>
+        <h2>Performance Summary</h2>
+        <p>Candidate: <strong id="display-name"></strong></p>
+        <h1 style="color: var(--secondary-color); font-size: 45px; margin: 10px 0;">
+            <span id="final-score">0</span> / 50
+        </h1>
+        <p id="feedback-text" style="font-weight: bold; margin-bottom: 25px;"></p>
+        
+        <button class="secondary-btn" onclick="showAnalysis()">Review Solutions & Analysis</button>
+        <button onclick="initDashboard()">Return to Dashboard</button>
+    </div>
+
+    <!-- Analysis Screen -->
+    <div class="container hidden" id="analysis-screen">
+        <h1>Solutions & Analysis</h1>
+        <div class="subtitle">Review your responses and learn from the official notes.</div>
+        <div id="analysis-container"></div>
+        <button onclick="initDashboard()" style="margin-top: 20px;">Return to Dashboard</button>
+    </div>
+
+    <script>
+        const quizData = [
+            // ICT Questions
+            { q: "What does the 'C' stand for in the abbreviation ICT?", opts: ["Computer", "Communication", "Common", "Connected"], ans: 1, rat: "ICT stands for Information and Communication Technology[cite: 231]." },
+            { q: "Which of the following is considered a primary disadvantage of ICT according to the SHEPC mnemonic?", opts: ["Speed", "Cost-effective", "Security Issues", "Efficiency"], ans: 2, rat: "According to the SHEPC mnemonic, disadvantages of ICT include Security Issues, Health Problems, Environmental Impact, Privacy Concerns, and Cost of Implementation[cite: 232, 233]." },
+            { q: "Which type of computer operates by measuring continuously varying physical variables like voltage or temperature?", opts: ["Digital Computer", "Hybrid Computer", "Analogue Computer", "Supercomputer"], ans: 2, rat: "Analogue computers handle continuously varying data and measure physical variables such as voltage, pressure, and temperature[cite: 240]." },
+            { q: "The performance of a Supercomputer is typically measured in:", opts: ["MIPS (Millions of Instructions Per Second)", "GHz (Gigahertz)", "FLOPS (Floating Point Operations Per Second)", "Bytes"], ans: 2, rat: "Supercomputer performance is measured in FLOPS (Floating Point Operations Per Second), often expressed as Petaflops[cite: 242]." },
+            { q: "Which generation of computers introduced Integrated Circuits (ICs)?", opts: ["First Generation", "Second Generation", "Third Generation", "Fourth Generation"], ans: 2, rat: "The Third Generation (1964-1971) of computers introduced Integrated Circuits (ICs), replacing transistors[cite: 237, 238]." },
+            { q: "India's first indigenously developed supercomputer by C-DAC in 1991 is:", opts: ["PARAM Shivay", "Pratyush", "PARAM 8000", "PARAM Pravega"], ans: 2, rat: "PARAM 8000 was the first supercomputer made in India, developed by C-DAC in 1991[cite: 243, 274, 275]." },
+            { q: "Which component of the Central Processing Unit (CPU) is responsible for handling comparison and selection operations?", opts: ["Control Unit", "Memory Unit", "Arithmetic Logic Unit (ALU)", "Input Unit"], ans: 2, rat: "The Arithmetic Logic Unit (ALU) handles arithmetic operations as well as logical operations like comparison and selection[cite: 249]." },
+            { q: "In the context of E-Learning initiatives, what is the primary focus of 'e-Yantra'?", opts: ["Providing digital library access", "Incorporating robotics into engineering education", "Offering a repository for e-journals", "Developing MOOC management software"], ans: 1, rat: "The primary purpose of e-Yantra is to incorporate robotics into engineering education[cite: 260, 279]." },
+            { q: "Which of the following is an example of an open-source, self-hosted Learning Management System (LMS)?", opts: ["Canvas", "Moodle", "Blackboard", "Schoology"], ans: 1, rat: "Moodle is the most popular, open-source LMS, which can be deployed on-premise (self-hosted)[cite: 256, 283]." },
+            { q: "SWAYAM is an Indian government initiative primarily aimed at providing:", opts: ["Free open-source software for schools", "Quality MOOCs (Massive Open Online Courses)", "Broadband internet to rural colleges", "Remote hardware laboratories"], ans: 1, rat: "SWAYAM is a MOOC platform designed to provide quality video lectures, assignments, and tests for free[cite: 265]." },
+            { q: "Which of the following best describes the 'Flipped Classroom' model?", opts: ["Students attend live video conferencing sessions with instant feedback.", "Students learn entirely offline without any internet connection.", "Content is delivered outside of class, and class time is used for practice and discussion.", "Teachers read directly from a textbook while students take notes."], ans: 2, rat: "In a Flipped Classroom, content delivery occurs outside class, and class time is reserved for practice, discussion, and problem-solving[cite: 255]." },
+            { q: "According to Von Neumann architecture, which unit dictates data transfer and instruction fetching without actually processing the data itself?", opts: ["Memory Unit", "Arithmetic Logic Unit", "Output Unit", "Control Unit"], ans: 3, rat: "The Control Unit controls data transfer and fetches instructions, but does not involve itself directly in data processing[cite: 249]." },
+            { q: "Which software falls under the category of System Software?", opts: ["Microsoft Word", "Operating Systems", "Adobe Photoshop", "Google Chrome"], ans: 1, rat: "System Software includes Operating systems, Drivers, Utilities, and Firmware, whereas word processors and graphics tools are Application Software[cite: 268]." },
+            { q: "Assertion (A): The internet and the World Wide Web (WWW) are exactly the same thing. Reason (R): The internet is the global system of interconnected computer networks, while the WWW is a service accessed via the internet.", opts: ["Both A and R are true", "Both A and R are false", "A is true, but R is false", "A is false, but R is true"], ans: 3, rat: "The internet is the global system of interconnected networks, while the WWW is a service/information space on the internet[cite: 251, 280]. They are not the same thing." },
+            { q: "PYQ: Information and communication technology (ICT) includes:", opts: ["E-mail", "Internet", "Educational television", "All of the above"], ans: 3, rat: "ICT encompasses e-mail, internet, and educational television[cite: 273, 274]." },
+            { q: "PYQ: A computer that processes both analogue and digital data is known as a:", opts: ["Supercomputer", "Hybrid computer", "Mainframe computer", "Microcomputer"], ans: 1, rat: "Hybrid computers combine the speed of analogue computers with the accuracy of digital computers[cite: 242, 274]." },
+            { q: "The 'D' in the SADPNFS mnemonic for computer characteristics stands for:", opts: ["Data", "Diligence", "Digital", "Dynamics"], ans: 1, rat: "The 'D' stands for Diligence, meaning the computer is free from tiredness and fatigue[cite: 235]." },
+            { q: "FOSSEE is an NMEICT initiative focused primarily on:", opts: ["Providing free and open-source software for education", "Building massive supercomputers", "Distributing laptops to students", "Managing cloud-based LMS deployments"], ans: 0, rat: "FOSSEE stands for Free and Open-Source Software for Education and provides materials like Spoken Tutorials and textbook companions[cite: 263]." },
+            { q: "Which of the following is considered 'Asynchronous' communication?", opts: ["A live video conference on Zoom", "An in-person presentation with Q&A", "Sending an email", "A real-time phone call"], ans: 2, rat: "Asynchronous communication allows data exchange without an immediate requirement for a response, such as Email[cite: 189]." },
+            { q: "Assertion (A): Mainframe computers are generally faster and more powerful than supercomputers. Reason (R): Mainframe computers are designed to handle millions of instructions per second and support massive concurrent users.", opts: ["Both A and R are true", "Both A and R are false", "A is true, but R is false", "A is false, but R is true"], ans: 3, rat: "Supercomputers are faster than mainframes (measuring in petaflops vs MIPS)[cite: 244]. However, mainframes are indeed designed to support thousands of concurrent users[cite: 244]." },
+            { q: "Which of the following is a key feature of a Cloud-Based LMS?", opts: ["It requires manual installation on local organization servers.", "It offers no scalable solutions.", "It requires no installation and offers automatic updates.", "It gives the organization full creative control over the server hardware."], ans: 2, rat: "A Cloud-based LMS requires no installation, is accessible from anywhere, and provides automatic updates[cite: 256]." },
+            { q: "Which educational initiative serves as a digital learning environment specifically for Design?", opts: ["E-Acharya", "E-Kalpa", "E-ShodhSindhu", "Virtual Labs"], ans: 1, rat: "E-Kalpa is a Digital Learning Environment for Design, featuring design resource databases and online content[cite: 262, 279]." },
+            { q: "The term 'Bandwidth' in the context of the internet refers to:", opts: ["The physical size of a network router", "Data transfer capacity", "The unique identifier for computers", "The name of a web browser"], ans: 1, rat: "Bandwidth refers to the data transfer capacity of a network[cite: 251]." },
+            { q: "According to the notes, which generation of computers utilized Very Large-Scale Integrated Circuits (VLSIC) and saw the invention of the PC?", opts: ["Second Generation", "Third Generation", "Fourth Generation", "Fifth Generation"], ans: 2, rat: "The Fourth Generation (1974-1990) utilized VLSIC and saw the development of personal computers (PCs)[cite: 238, 239]." },
+            { q: "The abbreviation 'GUI' in computing stands for:", opts: ["General Utility Interface", "Global User Internet", "Graphical User Interface", "Gateway User Integration"], ans: 2, rat: "GUI stands for Graphical User Interface, a key innovation introduced in the fourth generation of computers[cite: 238, 239]." },
+            
+            // Communication Questions
+            { q: "In the DIICC mnemonic defining the nature of communication, 'Irreversible' means:", opts: ["Communication is always formal", "Thoughts are hidden inside", "Once a message is sent, it cannot be taken back", "Communication is confined to a specific environment"], ans: 2, rat: "Communication is Irreversible, meaning once said or written, it cannot be taken back[cite: 158]." },
+            { q: "Which of the following is NOT categorized as Non-Verbal Communication?", opts: ["Kinesics", "Written Emails", "Haptics", "Oculesics"], ans: 1, rat: "Written emails use words (signs and symbols) and are therefore classified as Verbal Communication[cite: 160, 162]." },
+            { q: "What does 'Paralanguage' study in communication?", opts: ["The use of space and distance", "Non-lexical vocal elements like pitch, volume, and intonation", "Eye movement and blinking", "Communication through touch"], ans: 1, rat: "Paralanguage involves non-lexical components of speech like pitch, volume, rate, and intonation[cite: 164]." },
+            { q: "In Proxemics, the 'Public Zone' is generally considered to be:", opts: ["0 to 1.5 feet", "1.5 to 4 feet", "4 to 12 feet", "12+ feet"], ans: 3, rat: "The Public Zone in Proxemics is defined as 12+ feet, typically used for lectures and public speeches[cite: 166, 209]." },
+            { q: "Which type of formal communication flows between individuals at the same or similar levels within an organization?", opts: ["Upward Communication", "Downward Communication", "Horizontal Communication", "Diagonal Communication"], ans: 2, rat: "Horizontal Communication occurs between individuals at the same or similar levels within an organization[cite: 171]." },
+            { q: "In the context of the informal 'Grapevine', which chain involves a person randomly passing information to another individual?", opts: ["Gossip Chain", "Single Strand Chain", "Cluster Chain", "Probability Chain"], ans: 3, rat: "The Probability Chain involves an individual randomly telling another individual the same piece of information[cite: 173]." },
+            { q: "The 'Intimate Stage' of interpersonal communication is characterized by:", opts: ["Greetings to break the ice", "Complete openness and high vulnerability", "Communicating purely via formal memos", "Internal contemplation and self-concept evaluation"], ans: 1, rat: "The Intimate Stage involves complete openness, high vulnerability, and trust, meant for close friends and family[cite: 175]." },
+            { q: "Intrapersonal communication refers specifically to:", opts: ["Communication between two managers", "Communication with oneself in the mind", "Communication within a person's spiritual domain", "Mass communication via television"], ans: 1, rat: "Intrapersonal communication is communication done with oneself, occurring in the mind during thinking and analyzing[cite: 175]." },
+            { q: "According to chronological media emergence, which medium became widespread in the 18th-19th centuries before radio and TV?", opts: ["Internet", "Mobile Phones", "Newspapers", "Alternative Media"], ans: 2, rat: "Newspapers emerged in the 15th century and became widespread in the 18th-19th centuries, prior to radio and TV[cite: 180]." },
+            { q: "The mass media function of 'Surveillance' primarily acts to:", opts: ["Entertain audiences with celebrity gossip", "Serve as the eyes and ears for those seeking information", "Sensationalize facts to increase viewership", "Validate the status of particular individuals"], ans: 1, rat: "The Surveillance function serves as the eyes and ears for those seeking information, acting in a monitoring role[cite: 184]." },
+            { q: "In Edward de Bono's Six Thinking Hats, the White Hat signifies:", opts: ["Objective data and information gathering", "Emotions, feelings, and intuition", "Critical judgment and caution", "Positive thinking and looking for benefits"], ans: 0, rat: "The White Hat is used for recording objective data and information gathering[cite: 190]." },
+            { q: "Which psychological barrier occurs when a person assumes someone falls into a specific category and judges them purely based on that category?", opts: ["Halo Effect", "Cognitive Dissonance", "Stereotyping", "Homophones"], ans: 2, rat: "Stereotyping is assuming someone falls into a category and behaving based on that category, which acts as a barrier[cite: 205]." },
+            { q: "The technical term 'Channel Noise' is synonymous with:", opts: ["Psychological Barriers", "Semantic Barriers", "Mechanical Barriers", "Cultural Barriers"], ans: 2, rat: "Channel noise is the technical term for mechanical barriers, indicating a disturbance in the physical transmission of a message[cite: 198]." },
+            { q: "High-Context cultures typically exhibit which of the following traits?", opts: ["Direct and explicit communication styles", "A strong emphasis on task completion over human relations", "Indirect communication with a high reliance on non-verbal cues", "Poor decoding of unspoken messages"], ans: 2, rat: "High-Context cultures (like India) are indirect, implicit, and place a strong emphasis on human relations and non-verbal cues[cite: 201]." },
+            { q: "Assertion (A): Denotation refers to the cultural and personal emotions associated with a word. Reason (R): Connotation is the literal, universal dictionary meaning of a word.", opts: ["Both A and R are true", "Both A and R are false", "A is true, but R is false", "A is false, but R is true"], ans: 1, rat: "Both are false. Denotation is the literal dictionary meaning, while connotation refers to the emotional and cultural associations[cite: 202]." },
+            { q: "PYQ: The process of mass media deciding what information reaches the public is called:", opts: ["Surveillance", "Validation", "Gatekeeping", "Sensationalization"], ans: 2, rat: "Gatekeeping is the process by which media personnel decide what gets published, broadcast, or produced[cite: 182, 217]." },
+            { q: "PYQ: Semantic barriers in communication occur when:", opts: ["Equipment fails", "Words have different meanings to different people", "There is excessive physical noise", "A hierarchical status difference exists"], ans: 1, rat: "Semantic barriers occur when there is disagreement about the words being used, often due to differing cultural interpretations[cite: 202, 216]." },
+            { q: "PYQ: The TV Channel launched for covering only Engineering and Technology subjects is:", opts: ["Vyas", "Kisan", "Gyan Darshan", "Eklavya"], ans: 3, rat: "Eklavya is the TV channel specifically dedicated to Engineering and Technology subjects[cite: 183, 212]." },
+            { q: "Which of the following describes 'Filtering' in the context of psychological barriers?", opts: ["Using an electronic spam filter to block emails", "The sender's manipulation of information to present it more favorably to the receiver", "Evaluating a message before the sender has finished speaking", "A conflict between existing beliefs and new information"], ans: 1, rat: "Filtering is the sender's manipulation of information so it is presented more favorably to the receiver[cite: 203]." },
+            { q: "The 'Horn Effect' results in:", opts: ["A positive impression leading to higher trust", "Improved organizational communication due to clarity", "A negative impression or bias leading to lower trust", "The rapid spread of unstructured gossip"], ans: 2, rat: "The Horn Effect is a negative impression or bias that results in lower equity and lower trust[cite: 195]." },
+            { q: "Under the classification of communication networks, which network allows all participants to communicate with one another multi-directionally?", opts: ["Chain Network", "Y-Network", "Wheel Network", "All Channel (Star) Network"], ans: 3, rat: "The All Channel or Star Network allows multi-directional communication where all nodes are connected to all others[cite: 178]." },
+            { q: "Which media term refers to the recording of activity from the first-person perspective of a participant, often linked to citizen journalism?", opts: ["Embedded Journalism", "Yellow Journalism", "Surveillance", "New Wave"], ans: 2, rat: "Surveillance (as a media term) refers to recording activity from the perspective of a participant, like citizen journalism[cite: 182]." },
+            { q: "In the stages of interpersonal communication, what immediately follows the 'Phatic Stage'?", opts: ["The Intimate Stage", "The Transpersonal Stage", "The Personal Stage", "The Formal Stage"], ans: 2, rat: "Following the Phatic stage is the Personal Stage, where individuals bring more personal disclosure into the conversation[cite: 174, 175]." },
+            { q: "Which of the following is considered an organizational barrier to communication?", opts: ["Physical distance between employees", "Too many hierarchical levels", "Filtering of information", "All of the above"], ans: 3, rat: "Organizational barriers include physical distance, complexity/too many levels in structure, and filtering of information[cite: 195, 196]." },
+            { q: "Which of the following indicates 'Chronemics' in non-verbal communication?", opts: ["An employee arriving exactly on time for a meeting", "A manager wearing a blue suit to project authority", "A teacher raising their voice to emphasize a point", "Two colleagues shaking hands"], ans: 0, rat: "Chronemics is the role of time in communication, such as punctuality and waiting time[cite: 167, 168]." },
+            
+            // Reading Comprehension
+            { passage: "READING COMPREHENSION PASSAGE:\nA Learning Management System (LMS) is a software or web-based technology used to plan, implement, and assess learning processes. LMS deployment can generally be categorized into Cloud-based and On-premise systems. Cloud-based LMS requires no installation and offers automatic updates, whereas On-premise systems require the organization to download and install the software, offering higher initial costs but full creative control. Essential features of an LMS include course management, assessment tools, and tracking and reporting to monitor student progress.", q: "According to the passage, what is the primary function of a Learning Management System (LMS)?", opts: ["To design advanced robotics hardware", "To plan, implement, and assess learning processes", "To act as a physical library for textbooks", "To provide global internet connectivity"], ans: 1, rat: "The passage explicitly defines LMS as a technology used to plan, implement, and assess learning processes[cite: 255]." },
+            { passage: "READING COMPREHENSION PASSAGE:\nA Learning Management System (LMS) is a software or web-based technology used to plan, implement, and assess learning processes. LMS deployment can generally be categorized into Cloud-based and On-premise systems. Cloud-based LMS requires no installation and offers automatic updates, whereas On-premise systems require the organization to download and install the software, offering higher initial costs but full creative control. Essential features of an LMS include course management, assessment tools, and tracking and reporting to monitor student progress.", q: "Based on the passage, which of the following is an advantage of a Cloud-based LMS?", opts: ["It offers full creative control to the organization.", "It requires an expensive physical server installation.", "It requires no installation and offers automatic updates.", "It is strictly meant for single-user operations."], ans: 2, rat: "The passage notes that Cloud-based LMS requires no installation and offers automatic updates[cite: 256]." },
+            { passage: "READING COMPREHENSION PASSAGE:\nA Learning Management System (LMS) is a software or web-based technology used to plan, implement, and assess learning processes. LMS deployment can generally be categorized into Cloud-based and On-premise systems. Cloud-based LMS requires no installation and offers automatic updates, whereas On-premise systems require the organization to download and install the software, offering higher initial costs but full creative control. Essential features of an LMS include course management, assessment tools, and tracking and reporting to monitor student progress.", q: "Which deployment type results in higher initial costs but provides 'full creative control'?", opts: ["Cloud-based LMS", "On-premise LMS", "Hybrid Supercomputers", "Analogue Systems"], ans: 1, rat: "The passage states that On-premise systems require installation, offering higher initial costs but full creative control[cite: 256]." },
+            { passage: "READING COMPREHENSION PASSAGE:\nA Learning Management System (LMS) is a software or web-based technology used to plan, implement, and assess learning processes. LMS deployment can generally be categorized into Cloud-based and On-premise systems. Cloud-based LMS requires no installation and offers automatic updates, whereas On-premise systems require the organization to download and install the software, offering higher initial costs but full creative control. Essential features of an LMS include course management, assessment tools, and tracking and reporting to monitor student progress.", q: "According to the passage, which feature is utilized specifically to 'monitor student progress'?", opts: ["Course management", "Software installation", "Tracking and reporting", "Automatic updates"], ans: 2, rat: "The passage mentions that tracking and reporting are features used to monitor student progress[cite: 257]." },
+            { passage: "READING COMPREHENSION PASSAGE:\nA Learning Management System (LMS) is a software or web-based technology used to plan, implement, and assess learning processes. LMS deployment can generally be categorized into Cloud-based and On-premise systems. Cloud-based LMS requires no installation and offers automatic updates, whereas On-premise systems require the organization to download and install the software, offering higher initial costs but full creative control. Essential features of an LMS include course management, assessment tools, and tracking and reporting to monitor student progress.", q: "The passage describes an LMS as which type of technology?", opts: ["Exclusively mechanical", "Hardware-centric only", "Software or web-based", "Strictly analogue"], ans: 2, rat: "The passage defines LMS as a software or web-based technology[cite: 255]." }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let studentName = "";
+        let selectedOptionIndex = null;
+        let userAnswers = [];
+
+        // Hide all screens
+        function hideAllScreens() {
+            const screens = ['dashboard-screen', 'enroll-screen', 'quiz-screen', 'result-screen', 'analysis-screen'];
+            screens.forEach(id => document.getElementById(id).classList.add('hidden'));
+        }
+
+        // Initialize Dashboard on Load
+        function initDashboard() {
+            hideAllScreens();
+            document.getElementById('dashboard-screen').classList.remove('hidden');
+            
+            // Fetch saved results from local storage
+            const savedData = JSON.parse(localStorage.getItem('jrfHuntersMegaResults')) || [];
+            const dashContent = document.getElementById('dashboard-content');
+            
+            if (savedData.length === 0) {
+                dashContent.innerHTML = "<div class='empty-dash'>No candidate data found yet. Start an assessment to see your name and marks saved here!</div>";
+            } else {
+                let tableHTML = `
+                    <table class="dashboard-table">
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Candidate Name</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                        </tr>
+                `;
+                
+                // Reverse to show newest first
+                savedData.slice().reverse().forEach(attempt => {
+                    let percent = ((attempt.score / 50) * 100).toFixed(1);
+                    tableHTML += `
+                        <tr>
+                            <td>${attempt.date}</td>
+                            <td><strong>${attempt.name}</strong></td>
+                            <td><strong>${attempt.score} / 50</strong> (${percent}%)</td>
+                            <td><span style="color: green;">Saved</span></td>
+                        </tr>
+                    `;
+                });
+                tableHTML += "</table>";
+                dashContent.innerHTML = tableHTML;
+            }
+        }
+
+        function showEnrollScreen() {
+            hideAllScreens();
+            document.getElementById('enroll-screen').classList.remove('hidden');
+            document.getElementById('student-name').value = ""; // clear previous
+        }
+
+        function startQuiz() {
+            const nameInput = document.getElementById('student-name').value;
+            if (nameInput.trim() === "") { alert("Please enter your name to proceed."); return; }
+            
+            studentName = nameInput;
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            // Initialize answers array with nulls to track skipped questions
+            userAnswers = new Array(quizData.length).fill(null);
+            
+            hideAllScreens();
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            selectedOptionIndex = null;
+            const currentQ = quizData[currentQuestionIndex];
+            
+            document.getElementById('question-tracker').innerText = `Question ${currentQuestionIndex + 1} of ${quizData.length}`;
+            
+            const passageDiv = document.getElementById('passage-container');
+            if (currentQ.passage) {
+                passageDiv.innerText = currentQ.passage;
+                passageDiv.classList.remove('hidden');
+            } else {
+                passageDiv.classList.add('hidden');
+            }
+
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = "";
+            
+            currentQ.opts.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = option;
+                btn.onclick = () => selectOption(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+
+            const nextBtn = document.getElementById('next-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (currentQuestionIndex === quizData.length - 1) {
+                nextBtn.classList.add('hidden');
+                submitBtn.innerText = "Submit Final Test";
+            } else {
+                nextBtn.classList.remove('hidden');
+                submitBtn.innerText = "Submit Early";
+            }
+        }
+
+        function selectOption(index, btnElement) {
+            selectedOptionIndex = index;
+            const options = document.querySelectorAll('.option-btn');
+            options.forEach(opt => opt.classList.remove('selected'));
+            btnElement.classList.add('selected');
+        }
+
+        function nextQuestion() {
+            if (selectedOptionIndex === null) { 
+                alert("Please select an answer to proceed, or click 'Submit Early' if you wish to end the test now."); 
+                return; 
+            }
+            
+            // Record answer and update score
+            userAnswers[currentQuestionIndex] = selectedOptionIndex;
+            if (selectedOptionIndex === quizData[currentQuestionIndex].ans) { score++; }
+            
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizData.length) { 
+                loadQuestion(); 
+            } else { 
+                finishQuiz(); 
+            }
+        }
+
+        function confirmSubmit() {
+            // Check if they are on the last question anyway
+            if (currentQuestionIndex === quizData.length - 1) {
+                if (selectedOptionIndex !== null) {
+                    userAnswers[currentQuestionIndex] = selectedOptionIndex;
+                    if (selectedOptionIndex === quizData[currentQuestionIndex].ans) { score++; }
+                }
+                finishQuiz();
+                return;
+            }
+            
+            // Otherwise, prompt for early submission
+            const remaining = quizData.length - currentQuestionIndex;
+            const msg = `You have ${remaining} questions remaining. Are you sure you want to submit your assessment early? Unanswered questions will be marked as incorrect.`;
+            
+            if (confirm(msg)) {
+                // Save current answer if they selected one before hitting submit early
+                if (selectedOptionIndex !== null) {
+                    userAnswers[currentQuestionIndex] = selectedOptionIndex;
+                    if (selectedOptionIndex === quizData[currentQuestionIndex].ans) { score++; }
+                }
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            // Save Candidate Data to Local Storage (Website's database)
+            const previousData = JSON.parse(localStorage.getItem('jrfHuntersMegaResults')) || [];
+            
+            // Format date nicely
+            const now = new Date();
+            const dateString = now.toLocaleDateString() + " " + now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            const attemptData = {
+                name: studentName,
+                score: score,
+                date: dateString
+            };
+            
+            previousData.push(attemptData);
+            localStorage.setItem('jrfHuntersMegaResults', JSON.stringify(previousData));
+
+            // Show results
+            hideAllScreens();
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('display-name').innerText = studentName;
+            document.getElementById('final-score').innerText = score;
+
+            let feedback = "";
+            let percentage = (score / quizData.length) * 100;
+            if (percentage >= 80) feedback = "Excellent! You have a solid grasp on both ICT and Communication.";
+            else if (percentage >= 50) feedback = "Good effort, but review the explanations to fix conceptual gaps.";
+            else feedback = "Time to revise the notes. Focus on terminology and NTA PYQ traps!";
+            document.getElementById('feedback-text').innerText = feedback;
+        }
+
+        function showAnalysis() {
+            hideAllScreens();
+            document.getElementById('analysis-screen').classList.remove('hidden');
+            
+            const container = document.getElementById('analysis-container');
+            container.innerHTML = "";
+
+            quizData.forEach((q, index) => {
+                const userAnswerIdx = userAnswers[index];
+                
+                // Handle skipped questions from early submit
+                const isSkipped = userAnswerIdx === null || userAnswerIdx === undefined;
+                const isCorrect = !isSkipped && (userAnswerIdx === q.ans);
+                
+                let answerDisplay = "";
+                if (isSkipped) {
+                    answerDisplay = `<span class="text-gray">Skipped (No Answer Provided)</span>`;
+                } else {
+                    answerDisplay = `<span class="${isCorrect ? 'text-green' : 'text-red'}">
+                        ${q.opts[userAnswerIdx]} ${isCorrect ? ' (Correct)' : ' (Incorrect)'}
+                    </span>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'analysis-card';
+                
+                card.innerHTML = `
+                    <div class="analysis-q-title">Q${index + 1}: ${q.q}</div>
+                    <div class="analysis-response">
+                        Your Answer: ${answerDisplay}
+                    </div>
+                    ${!isCorrect ? `<div class="analysis-response">Correct Answer: <span class="text-green">${q.opts[q.ans]}</span></div>` : ''}
+                    <div class="analysis-rationale"><strong>Analysis:</strong> ${q.rat}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Boot up application
+        window.onload = initDashboard;
+
+    </script>
+</body>
+</html>
